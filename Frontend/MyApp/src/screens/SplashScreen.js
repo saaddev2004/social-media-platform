@@ -5,8 +5,8 @@ const SplashScreen = ({ navigation }) => {
   useEffect(() => {
     // TODO: AsyncStorage se token check karna
     const timer = setTimeout(() => {
-      console.log('Token checked. Navigation logic will go here.');
-      // navigation.replace('Login');
+      console.log('Token checked. Navigating to Signup.');
+      navigation.replace('Signup'); 
     }, 2000);
 
     return () => clearTimeout(timer);
