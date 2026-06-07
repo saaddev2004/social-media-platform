@@ -2,53 +2,29 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
-const SignupScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <KeyboardAvoidingView 
       style={styles.container} 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
 
         <View style={styles.headerContainer}>
           <Text style={styles.logoText}>Vynce</Text>
-          <Text style={styles.subtitleText}>Join the electric collective.</Text>
+          <Text style={styles.subtitleText}>Access your high-fidelity world.</Text>
         </View>
 
         <View style={styles.card}>
-          <View style={styles.inputWrapper}>
-            <Text style={styles.label}>Full Name</Text>
-            <View style={styles.inputContainer}>
-              <Feather name="user" size={20} color="#8E8E93" style={styles.icon} />
-              <TextInput 
-                style={styles.input} 
-                placeholder="Jordan Doe" 
-                placeholderTextColor="#8E8E93"
-              />
-            </View>
-          </View>
-
-          <View style={styles.inputWrapper}>
-            <Text style={styles.label}>Username</Text>
-            <View style={styles.inputContainer}>
-              <Feather name="at-sign" size={20} color="#8E8E93" style={styles.icon} />
-              <TextInput 
-                style={styles.input} 
-                placeholder="jordan_v" 
-                placeholderTextColor="#8E8E93"
-                autoCapitalize="none"
-              />
-            </View>
-          </View>
-
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>Email</Text>
             <View style={styles.inputContainer}>
               <Feather name="mail" size={20} color="#8E8E93" style={styles.icon} />
               <TextInput 
                 style={styles.input} 
-                placeholder="jordan@example.com" 
+                placeholder="name@example.com" 
                 placeholderTextColor="#8E8E93"
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -72,18 +48,23 @@ const SignupScreen = ({ navigation }) => {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.signupButton}>
-            <Text style={styles.signupButtonText}>Sign Up </Text>
+          <TouchableOpacity style={styles.forgotPasswordContainer}>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.loginButton}>
+            <Text style={styles.loginButtonText}>Log In </Text>
             <Feather name="arrow-right" size={20} color="#460283" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.footerContainer}>
-          <Text style={styles.footerText}>Already have an account? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-            <Text style={styles.loginText}>Log In</Text>
+          <Text style={styles.footerText}>Don't have an account? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.signupText}>Sign Up</Text>
           </TouchableOpacity>
         </View>
+
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -161,29 +142,39 @@ const styles = StyleSheet.create({
     fontSize: 15,
     outlineStyle: 'none',
   },
-  signupButton: {
+  forgotPasswordContainer: {
+    alignItems: 'flex-end',
+    marginBottom: 20,
+    marginTop: -5,
+  },
+  forgotPasswordText: {
+    color: '#D8B4FE',
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  loginButton: {
     backgroundColor: '#A855F7',
     borderRadius: 25,
     height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 15,
+    marginTop: 10,
     shadowColor: '#A855F7',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
     elevation: 5,
   },
-  signupButtonText: {
+  loginButtonText: {
     color: '#460283',
     fontSize: 16,
     fontWeight: 'bold',
     marginRight: 8,
   },
   footerContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginTop: 30,
   },
   footerText: {
@@ -191,11 +182,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  loginText: {
+  signupText: {
     color: '#E9D5FF',
     fontSize: 14,
     fontWeight: 'bold',
   },
 });
 
-export default SignupScreen;
+export default LoginScreen;
