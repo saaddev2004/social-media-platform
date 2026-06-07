@@ -1,14 +1,40 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Email and password are required');
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await axios.post('http://192.168.0.103:3000/api/auth/login', { email: email.trim(), password });
+      
+      const token = res.data.token;
+      if (token) {
+        await AsyncStorage.setItem('token', token);
+        Alert.alert('Success', 'Logged in successfully!');
+      }
+    } catch (error) {
+      console.log('Login error:', error.response?.data || error.message);
+      Alert.alert('Login Error', error.response?.data?.message || 'Invalid credentials');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <KeyboardAvoidingView 
       style={styles.container} 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
 
@@ -28,6 +54,8 @@ const LoginScreen = ({ navigation }) => {
                 placeholderTextColor="#8E8E93"
                 keyboardType="email-address"
                 autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
               />
             </View>
           </View>
@@ -41,6 +69,8 @@ const LoginScreen = ({ navigation }) => {
                 placeholder="••••••••" 
                 placeholderTextColor="#8E8E93"
                 secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#8E8E93" style={styles.iconRight} />
@@ -52,9 +82,15 @@ const LoginScreen = ({ navigation }) => {
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Log In </Text>
-            <Feather name="arrow-right" size={20} color="#460283" />
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
+            {loading ? (
+              <ActivityIndicator color="#460283" />
+            ) : (
+              <>
+                <Text style={styles.loginButtonText}>Log In </Text>
+                <Feather name="arrow-right" size={20} color="#460283" />
+              </>
+            )}
           </TouchableOpacity>
         </View>
 

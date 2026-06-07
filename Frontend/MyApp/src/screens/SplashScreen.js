@@ -1,15 +1,28 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SplashScreen = ({ navigation }) => {
   useEffect(() => {
-    // TODO: AsyncStorage se token check karna
-    const timer = setTimeout(() => {
-      console.log('Token checked. Navigating to Login.');
-      navigation.replace('Login'); 
-    }, 2000);
+    const checkAuth = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        setTimeout(() => {
+          if (token) {
+            console.log('Token found. Should navigate to Home.');
+            navigation.replace('Login'); 
+          } else {
+            console.log('No token. Navigating to Login.');
+            navigation.replace('Login');
+          }
+        }, 2000);
+      } catch (error) {
+        console.log('Error checking token', error);
+        navigation.replace('Login');
+      }
+    };
 
-    return () => clearTimeout(timer);
+    checkAuth();
   }, []);
 
   return (

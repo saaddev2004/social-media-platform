@@ -1,9 +1,38 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import axios from 'axios';
 
 const SignupScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSignup = async () => {
+    if (!fullName || !username || !email || !password) {
+      Alert.alert('Error', 'All fields are required');
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await axios.post('http://192.168.0.103:3000/api/auth/signup', { 
+        fullName, 
+        username: username.trim(), 
+        email: email.trim(), 
+        password 
+      });
+      Alert.alert('Success', res.data.message || 'User registered successfully');
+      navigation.navigate('Login');
+    } catch (error) {
+      console.log('Signup error:', error.response?.data || error.message);
+      Alert.alert('Error', error.response?.data?.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <KeyboardAvoidingView 
@@ -25,6 +54,8 @@ const SignupScreen = ({ navigation }) => {
                 style={styles.input} 
                 placeholder="Jordan Doe" 
                 placeholderTextColor="#8E8E93"
+                value={fullName}
+                onChangeText={setFullName}
               />
             </View>
           </View>
@@ -38,6 +69,8 @@ const SignupScreen = ({ navigation }) => {
                 placeholder="jordan_v" 
                 placeholderTextColor="#8E8E93"
                 autoCapitalize="none"
+                value={username}
+                onChangeText={setUsername}
               />
             </View>
           </View>
@@ -52,6 +85,8 @@ const SignupScreen = ({ navigation }) => {
                 placeholderTextColor="#8E8E93"
                 keyboardType="email-address"
                 autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
               />
             </View>
           </View>
@@ -65,6 +100,8 @@ const SignupScreen = ({ navigation }) => {
                 placeholder="••••••••" 
                 placeholderTextColor="#8E8E93"
                 secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#8E8E93" style={styles.iconRight} />
@@ -72,9 +109,15 @@ const SignupScreen = ({ navigation }) => {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.signupButton}>
-            <Text style={styles.signupButtonText}>Sign Up </Text>
-            <Feather name="arrow-right" size={20} color="#460283" />
+          <TouchableOpacity style={styles.signupButton} onPress={handleSignup} disabled={loading}>
+            {loading ? (
+              <ActivityIndicator color="#460283" />
+            ) : (
+              <>
+                <Text style={styles.signupButtonText}>Sign Up </Text>
+                <Feather name="arrow-right" size={20} color="#460283" />
+              </>
+            )}
           </TouchableOpacity>
         </View>
 
