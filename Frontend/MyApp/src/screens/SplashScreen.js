@@ -9,8 +9,8 @@ const SplashScreen = ({ navigation }) => {
         const token = await AsyncStorage.getItem('token');
         setTimeout(() => {
           if (token) {
-            console.log('Token found. Should navigate to Home.');
-            navigation.replace('Login'); 
+            console.log('Token found. Navigating to Home.');
+            navigation.replace('Home'); 
           } else {
             console.log('No token. Navigating to Login.');
             navigation.replace('Login');

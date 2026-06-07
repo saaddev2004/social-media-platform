@@ -22,7 +22,7 @@ const LoginScreen = ({ navigation }) => {
       const token = res.data.token;
       if (token) {
         await AsyncStorage.setItem('token', token);
-        Alert.alert('Success', 'Logged in successfully!');
+        navigation.replace('Home');
       }
     } catch (error) {
       console.log('Login error:', error.response?.data || error.message);
