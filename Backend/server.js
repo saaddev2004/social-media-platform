@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const app = express();
 const db = require("./db");
 // const bodyParser = require("body-parser");
@@ -33,7 +34,7 @@ app.use("/api/posts",isLoggedIn, postRoutes);
 app.use("/api/social",isLoggedIn, socialRoutes);
 app.use("/api/stories",isLoggedIn, storyRoutes);
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log("Server is running on port 3000");
+  console.log(`Server is running on port ${port}`);
 });

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const mongoURL = 'mongodb://localhost:27017/SocialConnect';
+const mongoURL = process.env.MONGO_URL;
 
 mongoose.connect(mongoURL);
 const db = mongoose.connection;
