@@ -73,7 +73,7 @@ const StoryViewerScreen = ({ route, navigation }) => {
   }, [currentGroupIndex, currentStoryIndex, currentStory]);
 
   const imageUri = currentStory?.image 
-    ? `http://192.168.0.103:3000/${currentStory.image.replace(/\\/g, '/')}` 
+    ? `https://social-media-platform-bice.vercel.app/${currentStory.image.replace(/\\/g, '/')}` 
     : null;
 
   const username = currentStory?.author?.username || 'vynce_creator';

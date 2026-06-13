@@ -18,7 +18,7 @@ const SignupScreen = ({ navigation }) => {
     }
     try {
       setLoading(true);
-      const res = await axios.post('http://192.168.0.103:3000/api/auth/signup', { 
+      const res = await axios.post('https://social-media-platform-bice.vercel.app/api/auth/signup', { 
         fullName, 
         username: username.trim(), 
         email: email.trim(), 

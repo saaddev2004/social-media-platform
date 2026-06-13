@@ -15,7 +15,7 @@ const HomeScreen = ({ navigation }) => {
       const token = await AsyncStorage.getItem('token');
       if (!token) return;
 
-      const res = await axios.get('http://192.168.0.103:3000/api/stories/feed', {
+      const res = await axios.get('https://social-media-platform-bice.vercel.app/api/stories/feed', {
         headers: { Authorization: `Bearer ${token}` }
       });
       
