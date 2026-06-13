@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, SafeAreaView, Image, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView, Image, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
@@ -136,7 +137,7 @@ const StoryViewerScreen = ({ route, navigation }) => {
               <View style={styles.flexSpace} />
 
 
-              <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} onStartShouldSetResponder={() => true}>
+              <KeyboardAvoidingView behavior="height" onStartShouldSetResponder={() => true}>
                 
                 <View style={styles.reactionsContainer}>
                   <TouchableOpacity style={styles.reactionCircle}>
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    paddingTop: Platform.OS === 'android' ? 30 : 0,
+    paddingTop: 30,
   },
   progressBarContainer: {
     flexDirection: 'row',

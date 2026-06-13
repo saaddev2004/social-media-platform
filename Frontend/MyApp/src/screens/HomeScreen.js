@@ -1,18 +1,18 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ route, navigation }) => {
+  const token = route.params?.token;
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchStories = async () => {
     try {
-      const token = await AsyncStorage.getItem('token');
       if (!token) return;
 
       const res = await axios.get('https://social-media-platform-bice.vercel.app/api/stories/feed', {
@@ -55,23 +55,18 @@ const HomeScreen = ({ navigation }) => {
     });
 
     if (!result.canceled) {
-      navigation.navigate('CreateStory', { imageUri: result.assets[0].uri });
+      navigation.navigate('CreateStory', { imageUri: result.assets[0].uri, token });
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem('token');
-      navigation.replace('Login');
-    } catch (error) {
-      console.log('Logout error:', error);
-    }
+  const handleLogout = () => {
+    navigation.replace('Login');
   };
 
 
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Vynce</Text>
         <TouchableOpacity onPress={handleLogout}>
@@ -92,7 +87,7 @@ const HomeScreen = ({ navigation }) => {
               if (item.isAddButton) {
                 return (
                   <TouchableOpacity style={styles.storyItem} onPress={handleCreateStory}>
-                    <View style={[styles.storyRing, { borderColor: 'transparent' }]}>
+                    <View style={[styles.storyRing, styles.transparentBorder]}>
                       <View style={styles.addStoryPlaceholder}>
                         <Ionicons name="add" size={24} color="#fff" />
                       </View>
@@ -126,7 +121,7 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.content}>
         <Text style={styles.placeholderText}>Feed Content Goes Here</Text>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -173,6 +168,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 5,
+  },
+  transparentBorder: {
+    borderColor: 'transparent',
   },
   storyImage: {
     width: 60,

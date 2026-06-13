@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,8 +22,7 @@ const LoginScreen = ({ navigation }) => {
       
       const token = res.data.token;
       if (token) {
-        await AsyncStorage.setItem('token', token);
-        navigation.replace('Home');
+        navigation.replace('Home', { token: token });
       }
     } catch (error) {
       console.log('Login error:', error.response?.data || error.message);
@@ -33,9 +33,10 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
-    >
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView 
+        style={styles.flexOne} 
+      >
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
 
         <View style={styles.headerContainer}>
@@ -102,7 +103,8 @@ const LoginScreen = ({ navigation }) => {
         </View>
 
       </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
@@ -110,6 +112,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#121212',
+  },
+  flexOne: {
+    flex: 1,
   },
   scrollContainer: {
     flexGrow: 1,
