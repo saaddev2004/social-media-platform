@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image, ActivityIndicator } from 'react-native';
+import PostItem from '../components/PostItem/PostItem'; // Import PostItem
 import { SafeAreaView } from 'react-native-safe-area-context';
+// import BottomTabs from '../navigation/BottomTabs';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
@@ -9,33 +11,48 @@ import { useFocusEffect } from '@react-navigation/native';
 const HomeScreen = ({ route, navigation }) => {
   const token = route.params?.token;
   const [stories, setStories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // Hard-coded posts for testing the design
+  const [posts, setPosts] = useState([
+    {
+      _id: '1',
+      username: 'alexus_x',
+      userImage: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200',
+      postImage: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=800',
+      timeAgo: '2 hours ago',
+      likes: '12.4k',
+      caption: 'Lost in the digital ether. New renders exploring fluidity and deep space',
+      commentCount: '342'
+    },
+    {
+      _id: '2',
+      username: 'neon_nights',
+      userImage: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=200',
+      postImage: 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=800',
+      timeAgo: '5 hours ago',
+      likes: '8.1k',
+      caption: 'Midnight architecture. Finding lines in the dark.',
+      commentCount: '128'
+    }
+  ]);
+  const [loading, setLoading] = useState(false);
 
   const fetchStories = async () => {
     try {
       if (!token) return;
-
       const res = await axios.get('https://social-media-platform-bice.vercel.app/api/stories/feed', {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
       const grouped = res.data.reduce((acc, story) => {
         const authorId = story.author._id;
         if (!acc[authorId]) {
-          acc[authorId] = {
-            author: story.author,
-            stories: []
-          };
+          acc[authorId] = { author: story.author, stories: [] };
         }
         acc[authorId].stories.push(story);
         return acc;
       }, {});
-
-      const storyGroups = Object.values(grouped);
-      setStories(storyGroups);
+      setStories(Object.values(grouped));
     } catch (error) {
       console.log('Error fetching stories:', error.response?.data || error.message);
-      navigation.replace('Login');
     } finally {
       setLoading(false);
     }
@@ -44,26 +61,17 @@ const HomeScreen = ({ route, navigation }) => {
   useFocusEffect(
     useCallback(() => {
       fetchStories();
+      // Yahan tum fetchPosts() bhi call karoge jab backend ready hoga
     }, [])
   );
 
+  // ... (handleCreateStory and handleLogout remain same)
   const handleCreateStory = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      navigation.navigate('CreateStory', { imageUri: result.assets[0].uri, token });
-    }
+    let result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 1 });
+    if (!result.canceled) navigation.navigate('CreateStory', { imageUri: result.assets[0].uri, token });
   };
 
-  const handleLogout = () => {
-    navigation.replace('Login');
-  };
-
-
+  const handleLogout = () => navigation.replace('Login');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -73,43 +81,30 @@ const HomeScreen = ({ route, navigation }) => {
           <Ionicons name="log-out-outline" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
-      
+
+      {/* Stories Section */}
       <View style={styles.storiesContainer}>
-        {loading ? (
-          <ActivityIndicator color="#A855F7" />
-        ) : (
-          <FlatList 
+        {loading ? <ActivityIndicator color="#A855F7" /> : (
+          <FlatList
             data={[{ isAddButton: true }, ...stories]}
             horizontal
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item, index) => item.isAddButton ? 'add-btn' : item.author._id}
             renderItem={({ item, index }) => {
-              if (item.isAddButton) {
-                return (
-                  <TouchableOpacity style={styles.storyItem} onPress={handleCreateStory}>
-                    <View style={[styles.storyRing, styles.transparentBorder]}>
-                      <View style={styles.addStoryPlaceholder}>
-                        <Ionicons name="add" size={24} color="#fff" />
-                      </View>
-                    </View>
-                    <Text style={styles.storyUsername}>Your Story</Text>
-                  </TouchableOpacity>
-                );
-              }
-              return (
-                <TouchableOpacity 
-                  style={styles.storyItem} 
-                  onPress={() => navigation.navigate('StoryViewer', { allGroups: stories, initialGroupIndex: index - 1 })}
-                >
-                  <View style={styles.storyRing}>
-                    <Image 
-                      source={{ uri: item.author.profilePic !== 'default.png' ? item.author.profilePic : 'https://ui-avatars.com/api/?name=' + item.author.username }} 
-                      style={styles.storyImage} 
-                    />
+              if (item.isAddButton) return (
+                <TouchableOpacity style={styles.storyItem} onPress={handleCreateStory}>
+                  <View style={[styles.storyRing, styles.transparentBorder]}>
+                    <View style={styles.addStoryPlaceholder}><Ionicons name="add" size={24} color="#fff" /></View>
                   </View>
-                  <Text style={styles.storyUsername} numberOfLines={1}>
-                    {item.author.username}
-                  </Text>
+                  <Text style={styles.storyUsername}>Your Story</Text>
+                </TouchableOpacity>
+              );
+              return (
+                <TouchableOpacity style={styles.storyItem} onPress={() => navigation.navigate('StoryViewer', { allGroups: stories, initialGroupIndex: index - 1 })}>
+                  <View style={styles.storyRing}>
+                    <Image source={{ uri: item.author.profilePic !== 'default.png' ? item.author.profilePic : 'https://ui-avatars.com/api/?name=' + item.author.username }} style={styles.storyImage} />
+                  </View>
+                  <Text style={styles.storyUsername} numberOfLines={1}>{item.author.username}</Text>
                 </TouchableOpacity>
               );
             }}
@@ -118,12 +113,18 @@ const HomeScreen = ({ route, navigation }) => {
         )}
       </View>
 
-      <View style={styles.content}>
-        <Text style={styles.placeholderText}>Feed Content Goes Here</Text>
-      </View>
+      {/* Feed Section using PostItem */}
+      <FlatList
+        data={posts} // Yahan tumhara real API data aayega
+        keyExtractor={(item) => item._id}
+        renderItem={({ item }) => <PostItem item={item} />}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      />
+      {/* <BottomTabs /> */}
     </SafeAreaView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

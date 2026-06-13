@@ -19,10 +19,10 @@ const LoginScreen = ({ navigation }) => {
     try {
       setLoading(true);
       const res = await axios.post('https://social-media-platform-bice.vercel.app/api/auth/login', { email: email.trim(), password });
-      
+
       const token = res.data.token;
       if (token) {
-        navigation.replace('Home', { token: token });
+        navigation.replace('Main', { token: res.data.token });
       }
     } catch (error) {
       console.log('Login error:', error.response?.data || error.message);
@@ -34,75 +34,75 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        style={styles.flexOne} 
+      <KeyboardAvoidingView
+        style={styles.flexOne}
       >
-      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
 
-        <View style={styles.headerContainer}>
-          <Text style={styles.logoText}>Vynce</Text>
-          <Text style={styles.subtitleText}>Access your high-fidelity world.</Text>
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.inputWrapper}>
-            <Text style={styles.label}>Email</Text>
-            <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color="#8E8E93" style={styles.icon} />
-              <TextInput 
-                style={styles.input} 
-                placeholder="name@example.com" 
-                placeholderTextColor="#8E8E93"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={setEmail}
-              />
-            </View>
+          <View style={styles.headerContainer}>
+            <Text style={styles.logoText}>Vynce</Text>
+            <Text style={styles.subtitleText}>Access your high-fidelity world.</Text>
           </View>
 
-          <View style={styles.inputWrapper}>
-            <Text style={styles.label}>Password</Text>
-            <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color="#8E8E93" style={styles.icon} />
-              <TextInput 
-                style={styles.input} 
-                placeholder="••••••••" 
-                placeholderTextColor="#8E8E93"
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
-              />
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={20} color="#8E8E93" style={styles.iconRight} />
-              </TouchableOpacity>
+          <View style={styles.card}>
+            <View style={styles.inputWrapper}>
+              <Text style={styles.label}>Email</Text>
+              <View style={styles.inputContainer}>
+                <Ionicons name="mail-outline" size={20} color="#8E8E93" style={styles.icon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="name@example.com"
+                  placeholderTextColor="#8E8E93"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  value={email}
+                  onChangeText={setEmail}
+                />
+              </View>
             </View>
+
+            <View style={styles.inputWrapper}>
+              <Text style={styles.label}>Password</Text>
+              <View style={styles.inputContainer}>
+                <Ionicons name="lock-closed-outline" size={20} color="#8E8E93" style={styles.icon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="••••••••"
+                  placeholderTextColor="#8E8E93"
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                  <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={20} color="#8E8E93" style={styles.iconRight} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <TouchableOpacity style={styles.forgotPasswordContainer}>
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
+              {loading ? (
+                <ActivityIndicator color="#460283" />
+              ) : (
+                <>
+                  <Text style={styles.loginButtonText}>Log In </Text>
+                  <Ionicons name="arrow-forward" size={20} color="#460283" />
+                </>
+              )}
+            </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.forgotPasswordContainer}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
+          <View style={styles.footerContainer}>
+            <Text style={styles.footerText}>Don't have an account? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+              <Text style={styles.signupText}>Sign Up</Text>
+            </TouchableOpacity>
+          </View>
 
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
-            {loading ? (
-              <ActivityIndicator color="#460283" />
-            ) : (
-              <>
-                <Text style={styles.loginButtonText}>Log In </Text>
-                <Ionicons name="arrow-forward" size={20} color="#460283" />
-              </>
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.footerContainer}>
-          <Text style={styles.footerText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-            <Text style={styles.signupText}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-
-      </ScrollView>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
