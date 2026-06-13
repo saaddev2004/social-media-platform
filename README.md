@@ -1,79 +1,125 @@
-# Final Project by Folios
+<div align="center">
+  <img src="GUI Images/Splash Screen.png" alt="Vynce Logo" width="150" />
+  <h1>Vynce - Social Media App</h1>
+  <p>A modern, high-performance social media application built with React Native and Node.js. Share your moments, connect with friends, and explore the world.</p>
+</div>
 
-## Overview
-Folios Social is a comprehensive backend API for a social media platform, developed as a final project for the Web Application Development course. It empowers users to create accounts, share posts with images, publish temporary stories, engage through comments, and build social connections via likes and follows. Built with Node.js and Express.js, it leverages MongoDB for data persistence, Passport.js for secure authentication, and Multer for efficient file handling.
+---
 
-## Features
-- User registration and authentication (using Passport.js)
-- User profiles and management
-- Posting system with image uploads
-- Stories feature
-- Comments on posts
-- Social interactions (likes, follows, etc.)
-- File upload handling with Multer
-- Session-based authentication
+## 🌟 Features
 
-## Tech Stack
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB with Mongoose ODM
-- **Authentication**: Passport.js with Local Strategy
-- **File Uploads**: Multer
-- **Session Management**: Express-Session
-- **Password Hashing**: bcryptjs
+- **Authentication System:** Secure Login and Signup using JWT tokens.
+- **Stories:** Upload, view, and navigate through user stories with a seamless tap interface.
+- **Cloudinary Integration:** Reliable image hosting and delivery.
+- **Live Feed:** Browse posts and updates from people you follow.
+- **Profile Management:** View and edit your personal profile.
+- **Cross-Platform Design:** Beautiful and responsive UI designed strictly for mobile devices.
 
-## Installation
-1. Clone the repository:
+## 🚀 Tech Stack
+
+**Frontend:**
+- React Native (Expo)
+- React Navigation (Native Stack)
+- Axios
+- Expo Image Picker
+
+**Backend:**
+- Node.js & Express
+- MongoDB (Mongoose)
+- Cloudinary & Multer (for robust image storage)
+- JWT Authentication
+- Vercel (Deployment)
+
+---
+
+## 📸 User Interface (Screenshots)
+
+We pride ourselves on a beautiful, dark-themed UI that is easy on the eyes and provides an immersive experience.
+
+<table>
+  <tr>
+    <td align="center">
+      <b>Splash Screen</b><br/>
+      <img src="GUI%20Images/Splash%20Screen.png" width="250" />
+    </td>
+    <td align="center">
+      <b>Login</b><br/>
+      <img src="GUI%20Images/Login.png" width="250" />
+    </td>
+    <td align="center">
+      <b>Sign Up</b><br/>
+      <img src="GUI%20Images/Sign%20Up.png" width="250" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <b>Home Feed</b><br/>
+      <img src="GUI%20Images/Home%20Feed.png" width="250" />
+    </td>
+    <td align="center">
+      <b>Create Story</b><br/>
+      <img src="GUI%20Images/Create%20Story.png" width="250" />
+    </td>
+    <td align="center">
+      <b>Story Viewer</b><br/>
+      <img src="GUI%20Images/Story%20Viewer.png" width="250" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <b>Create Post</b><br/>
+      <img src="GUI%20Images/Create%20Post.png" width="250" />
+    </td>
+    <td align="center">
+      <b>Comments</b><br/>
+      <img src="GUI%20Images/Comments.png" width="250" />
+    </td>
+    <td align="center">
+      <b>Explore</b><br/>
+      <img src="GUI%20Images/Explore.png" width="250" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <b>Profile</b><br/>
+      <img src="GUI%20Images/Profile.png" width="250" />
+    </td>
+    <td align="center">
+      <b>Edit Profile</b><br/>
+      <img src="GUI%20Images/Edit%20Profile.png" width="250" />
+    </td>
+    <td align="center"></td>
+  </tr>
+</table>
+
+---
+
+## 🛠️ Installation & Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/saaddev2004/social-media-platform.git
+   cd social-media-platform
    ```
-   git clone <repository-url>
-   cd final-project-by-folios
+
+2. **Frontend Setup**
+   ```bash
+   cd Frontend/MyApp
+   npm install
+   npx expo start
    ```
 
-2. Install dependencies:
-   ```
+3. **Backend Setup (Local)**
+   ```bash
+   cd Backend
    npm install
    ```
-
-3. Set up MongoDB:
-   - Ensure MongoDB is installed and running on your system
-   - Update the database connection in `db.js` if needed
-
-4. Start the server:
-   ```
+   *Create a `.env` file in the Backend folder with your MongoDB URI, JWT Secret, and Cloudinary credentials.*
+   ```bash
    npm start
    ```
-   Or for development with auto-restart:
-   ```
-   npx nodemon server.js
-   ```
 
-The server will run on `http://localhost:3000`
+---
 
-## API Endpoints
-- `/api/auth` - Authentication routes (login, register, logout)
-- `/api/user` - User management (protected)
-- `/api/posts` - Post operations (protected)
-- `/api/social` - Social interactions (protected)
-- `/api/stories` - Stories management (protected)
-
-## Project Structure
-- `server.js` - Main application entry point and server configuration
-- `db.js` - MongoDB connection setup
-- `models/` - Mongoose schemas for User, Post, Story, and Comment entities
-- `routes/` - Express route handlers for authentication, user management, posts, social interactions, and stories
-- `middleware/` - Custom middleware for authentication checks and file upload processing
-- `config/` - Passport.js configuration for local authentication strategy
-- `uploads/` - Directory for storing user-uploaded images and media files
-- `Documentation/` - Project design documents and specifications
-- `classDiagram/` - UML class diagrams illustrating the system architecture
-
-## Future Plans
-- Implement a realtime chat bot feature for user interactions
-- Develop a frontend interface (React/Vue/Angular) to complement the backend API
-- Add real-time notifications using WebSockets
-- Enhance security features and API documentation
-
-## Contributing
-This is a university final project. For contributions or improvements, please refer to the project documentation in the `Documentation/` folder.
-
-## License
-ISC
+## 📝 Development Log
+Check out the detailed development journey, problems faced, and learning reflections in the **[Log File](logfile%20by%20Laheem.txt)**.
