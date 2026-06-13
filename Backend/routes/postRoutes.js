@@ -109,10 +109,6 @@ router.delete('/:postId',   async (req, res) => {
             return res.status(401).json({ message: "Unauthorized: You can only delete your own posts" });
         }
 
-        // Server ke folder se image delete karo (Safai)
-        if (fs.existsSync(post.image)) {
-            fs.unlinkSync(post.image);
-        }
 
         // Database se post uda do
         await post.deleteOne();
