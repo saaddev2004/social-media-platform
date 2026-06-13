@@ -43,7 +43,6 @@ const CreateStoryScreen = ({ route, navigation }) => {
         name: 'story.jpg',
         type: 'image/jpeg',
       });
-
       const res = await axios.post('https://social-media-platform-bice.vercel.app/api/stories/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
