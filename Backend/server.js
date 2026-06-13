@@ -2,6 +2,8 @@ const express = require("express");
 require("dotenv").config();
 const app = express();
 const db = require("./db");
+const cors = require("cors");
+app.use(cors());
 // const bodyParser = require("body-parser");
 const passport = require("passport");
 const path = require("path");
