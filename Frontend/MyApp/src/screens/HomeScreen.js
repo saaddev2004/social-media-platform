@@ -1,8 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image, ActivityIndicator } from 'react-native';
-import PostItem from '../components/PostItem/PostItem'; // Import PostItem
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image, ActivityIndicator, RefreshControl } from 'react-native';
+import PostItem from '../components/PostItem/PostItem';
 import { SafeAreaView } from 'react-native-safe-area-context';
-// import BottomTabs from '../navigation/BottomTabs';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
@@ -10,32 +9,28 @@ import { useFocusEffect } from '@react-navigation/native';
 
 const HomeScreen = ({ route, navigation }) => {
   const token = route.params?.token;
+  // Login ke waqt agar tumne userId bheji thi to wo yahan access hogi
+  const currentUserId = route.params?.userId; 
+  
   const [stories, setStories] = useState([]);
-  // Hard-coded posts for testing the design
-  const [posts, setPosts] = useState([
-    {
-      _id: '1',
-      username: 'alexus_x',
-      userImage: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200',
-      postImage: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=800',
-      timeAgo: '2 hours ago',
-      likes: '12.4k',
-      caption: 'Lost in the digital ether. New renders exploring fluidity and deep space',
-      commentCount: '342'
-    },
-    {
-      _id: '2',
-      username: 'neon_nights',
-      userImage: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=200',
-      postImage: 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=800',
-      timeAgo: '5 hours ago',
-      likes: '8.1k',
-      caption: 'Midnight architecture. Finding lines in the dark.',
-      commentCount: '128'
-    }
-  ]);
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
+  // 1. Backend se Posts fetch karne ka function
+  const fetchPosts = async () => {
+    try {
+      if (!token) return;
+      const res = await axios.get('https://social-media-platform-bice.vercel.app/api/posts/all', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPosts(res.data);
+    } catch (error) {
+      console.log('Error fetching posts:', error.response?.data || error.message);
+    }
+  };
+
+  // 2. Stories fetch karne ka function
   const fetchStories = async () => {
     try {
       if (!token) return;
@@ -53,19 +48,21 @@ const HomeScreen = ({ route, navigation }) => {
       setStories(Object.values(grouped));
     } catch (error) {
       console.log('Error fetching stories:', error.response?.data || error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
   useFocusEffect(
     useCallback(() => {
-      fetchStories();
-      // Yahan tum fetchPosts() bhi call karoge jab backend ready hoga
-    }, [])
+      setLoading(true);
+      Promise.all([fetchStories(), fetchPosts()]).finally(() => setLoading(false));
+    }, [token])
   );
 
-  // ... (handleCreateStory and handleLogout remain same)
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchPosts().then(() => setRefreshing(false));
+  };
+
   const handleCreateStory = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 1 });
     if (!result.canceled) navigation.navigate('CreateStory', { imageUri: result.assets[0].uri, token });
@@ -84,7 +81,7 @@ const HomeScreen = ({ route, navigation }) => {
 
       {/* Stories Section */}
       <View style={styles.storiesContainer}>
-        {loading ? <ActivityIndicator color="#A855F7" /> : (
+        {loading && stories.length === 0 ? <ActivityIndicator color="#A855F7" /> : (
           <FlatList
             data={[{ isAddButton: true }, ...stories]}
             horizontal
@@ -113,97 +110,43 @@ const HomeScreen = ({ route, navigation }) => {
         )}
       </View>
 
-      {/* Feed Section using PostItem */}
+      {/* Feed Section */}
       <FlatList
-        data={posts} // Yahan tumhara real API data aayega
+        data={posts}
         keyExtractor={(item) => item._id}
-        renderItem={({ item }) => <PostItem item={item} />}
+        renderItem={({ item }) => (
+          <PostItem 
+            item={item} 
+            token={token} 
+            currentUserId={currentUserId} // Ye zaroori hai Like logic ke liye
+          />
+        )}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#fff" />}
         contentContainerStyle={{ paddingBottom: 20 }}
+        ListEmptyComponent={
+          !loading && (
+            <View style={{marginTop: 50}}>
+                <Text style={{ color: '#666', textAlign: 'center' }}>No posts available!</Text>
+            </View>
+          )
+        }
       />
-      {/* <BottomTabs /> */}
     </SafeAreaView>
   );
 };
 
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  headerContainer: {
-    paddingTop: 50,
-    paddingHorizontal: 15,
-    paddingBottom: 10,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#262626',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  header: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
-    fontStyle: 'italic',
-  },
-  storiesContainer: {
-    paddingVertical: 10,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#262626',
-  },
-  storiesList: {
-    paddingHorizontal: 10,
-  },
-  storyItem: {
-    alignItems: 'center',
-    marginHorizontal: 8,
-    width: 72,
-  },
-  storyRing: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    borderWidth: 2,
-    borderColor: '#C084FC',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  transparentBorder: {
-    borderColor: 'transparent',
-  },
-  storyImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    borderWidth: 2,
-    borderColor: '#000',
-  },
-  addStoryPlaceholder: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#262626',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#000',
-  },
-  storyUsername: {
-    color: '#fff',
-    fontSize: 12,
-    textAlign: 'center',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  placeholderText: {
-    color: '#A0A0A0',
-    fontSize: 16,
-  }
+  container: { flex: 1, backgroundColor: '#000' },
+  headerContainer: { paddingTop: 50, paddingHorizontal: 15, paddingBottom: 10, borderBottomWidth: 0.5, borderBottomColor: '#262626', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  header: { color: '#fff', fontSize: 24, fontWeight: 'bold', fontStyle: 'italic' },
+  storiesContainer: { paddingVertical: 10, borderBottomWidth: 0.5, borderBottomColor: '#262626' },
+  storiesList: { paddingHorizontal: 10 },
+  storyItem: { alignItems: 'center', marginHorizontal: 8, width: 72 },
+  storyRing: { width: 68, height: 68, borderRadius: 34, borderWidth: 2, borderColor: '#C084FC', justifyContent: 'center', alignItems: 'center', marginBottom: 5 },
+  transparentBorder: { borderColor: 'transparent' },
+  storyImage: { width: 60, height: 60, borderRadius: 30, borderWidth: 2, borderColor: '#000' },
+  addStoryPlaceholder: { width: 60, height: 60, borderRadius: 30, backgroundColor: '#262626', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#000' },
+  storyUsername: { color: '#fff', fontSize: 12, textAlign: 'center' }
 });
 
 export default HomeScreen;
