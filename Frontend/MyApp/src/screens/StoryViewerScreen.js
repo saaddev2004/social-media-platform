@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView, Image, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import { View, ImageBackground, StyleSheet, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+
+import StoryProgressBar from '../components/StoryViewer/StoryProgressBar';
+import StoryHeader from '../components/StoryViewer/StoryHeader';
+import StoryFooter from '../components/StoryViewer/StoryFooter';
 
 const { width } = Dimensions.get('window');
 
@@ -74,7 +77,7 @@ const StoryViewerScreen = ({ route, navigation }) => {
   }, [currentGroupIndex, currentStoryIndex, currentStory]);
 
   const imageUri = currentStory?.image 
-    ? `https://social-media-platform-bice.vercel.app/${currentStory.image.replace(/\\/g, '/')}` 
+    ? (currentStory.image.startsWith('http') ? currentStory.image : `https://social-media-platform-bice.vercel.app/${currentStory.image.replace(/\\/g, '/')}`)
     : null;
 
   const username = currentStory?.author?.username || 'vynce_creator';
@@ -96,78 +99,21 @@ const StoryViewerScreen = ({ route, navigation }) => {
             
             <SafeAreaView style={styles.safeArea}>
               
+              <StoryProgressBar 
+                stories={stories} 
+                currentStoryIndex={currentStoryIndex} 
+              />
 
-              <View style={styles.progressBarContainer}>
-                {stories.map((s, idx) => (
-                  <View 
-                    key={s._id || idx}
-                    style={[
-                      styles.progressSegment, 
-                      idx <= currentStoryIndex && styles.progressActive
-                    ]} 
-                  />
-                ))}
-              </View>
-
-
-              <View style={styles.header}>
-                <View style={styles.userInfo}>
-                  <Image source={{ uri: profilePic }} style={styles.avatar} />
-                  <View>
-                    <View style={styles.usernameRow}>
-                      <Text style={styles.username}>@{username}</Text>
-                      <MaterialIcons name="verified" size={14} color="#00E5FF" style={styles.verifiedIcon} />
-                    </View>
-                    <Text style={styles.timeText}>{timeAgo}</Text>
-                  </View>
-                </View>
-
-
-                <View style={styles.headerRight} onStartShouldSetResponder={() => true}>
-                  <TouchableOpacity style={styles.iconButton}>
-                    <Ionicons name="ellipsis-horizontal" size={24} color="#fff" />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.iconButton} onPress={() => navigation.goBack()}>
-                    <Ionicons name="close" size={24} color="#fff" />
-                  </TouchableOpacity>
-                </View>
-              </View>
-
+              <StoryHeader 
+                profilePic={profilePic}
+                username={username}
+                timeAgo={timeAgo}
+                onClose={() => navigation.goBack()}
+              />
 
               <View style={styles.flexSpace} />
 
-
-              <KeyboardAvoidingView behavior="height" onStartShouldSetResponder={() => true}>
-                
-                <View style={styles.reactionsContainer}>
-                  <TouchableOpacity style={styles.reactionCircle}>
-                    <Text style={styles.emojiText}>🔥</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.reactionCircle}>
-                    <Text style={styles.emojiText}>😍</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.reactionCircle}>
-                    <Text style={styles.emojiText}>😮</Text>
-                  </TouchableOpacity>
-                </View>
-
-                <View style={styles.footer}>
-                  <View style={styles.inputContainer}>
-                    <TextInput 
-                      style={styles.input} 
-                      placeholder="Send message..." 
-                      placeholderTextColor="#A0A0A0"
-                    />
-                  </View>
-                  <TouchableOpacity style={styles.footerIconButton}>
-                    <Ionicons name="heart-outline" size={24} color="#fff" />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.footerIconButton}>
-                    <Ionicons name="paper-plane-outline" size={24} color="#fff" />
-                  </TouchableOpacity>
-                </View>
-                
-              </KeyboardAvoidingView>
+              <StoryFooter />
 
             </SafeAreaView>
           </ImageBackground>
@@ -194,116 +140,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 30,
   },
-  progressBarContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 10,
-    marginTop: 10,
-    gap: 5,
-  },
-  progressSegment: {
-    flex: 1,
-    height: 2,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 2,
-  },
-  progressActive: {
-    backgroundColor: '#fff',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    marginTop: 15,
-  },
-  userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: '#3d3d3d',
-    marginRight: 10,
-  },
-  usernameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  username: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  verifiedIcon: {
-    marginLeft: 4,
-  },
-  timeText: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 12,
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 15,
-  },
-  iconButton: {
-    padding: 5,
-  },
   flexSpace: {
     flex: 1,
-  },
-  reactionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    gap: 12,
-  },
-  reactionCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(30,30,30,0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-  },
-  emojiText: {
-    fontSize: 20,
-  },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingBottom: 20,
-    gap: 15,
-  },
-  inputContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(30,30,30,0.7)',
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-    height: 46,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
-  input: {
-    color: '#fff',
-    fontSize: 15,
-    outlineStyle: 'none',
-  },
-  footerIconButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(30,30,30,0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
   }
 });
 

@@ -7,8 +7,7 @@ import axios from 'axios';
 import TopControls from '../components/CreateStory/TopControls';
 import RightSidebar from '../components/CreateStory/RightSidebar';
 import BottomControls from '../components/CreateStory/BottomControls';
-import * as ImagePicker from 'expo-image-picker';
-import axios from 'axios';
+
 
 
 const CreateStoryScreen = ({ route, navigation }) => {
