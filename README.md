@@ -77,10 +77,6 @@ We pride ourselves on a beautiful, dark-themed UI that is easy on the eyes and p
       <b>Comments</b><br/>
       <img src="GUI%20Images/Comments.png" width="250" />
     </td>
-    <td align="center">
-      <b>Explore</b><br/>
-      <img src="GUI%20Images/Explore.png" width="250" />
-    </td>
   </tr>
   <tr>
     <td align="center">
