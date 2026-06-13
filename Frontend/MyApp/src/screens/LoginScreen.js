@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert, ActivityIndicator } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -47,7 +47,7 @@ const LoginScreen = ({ navigation }) => {
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>Email</Text>
             <View style={styles.inputContainer}>
-              <Feather name="mail" size={20} color="#8E8E93" style={styles.icon} />
+              <Ionicons name="mail-outline" size={20} color="#8E8E93" style={styles.icon} />
               <TextInput 
                 style={styles.input} 
                 placeholder="name@example.com" 
@@ -63,7 +63,7 @@ const LoginScreen = ({ navigation }) => {
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>Password</Text>
             <View style={styles.inputContainer}>
-              <Feather name="lock" size={20} color="#8E8E93" style={styles.icon} />
+              <Ionicons name="lock-closed-outline" size={20} color="#8E8E93" style={styles.icon} />
               <TextInput 
                 style={styles.input} 
                 placeholder="••••••••" 
@@ -73,7 +73,7 @@ const LoginScreen = ({ navigation }) => {
                 onChangeText={setPassword}
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#8E8E93" style={styles.iconRight} />
+                <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={20} color="#8E8E93" style={styles.iconRight} />
               </TouchableOpacity>
             </View>
           </View>
@@ -88,7 +88,7 @@ const LoginScreen = ({ navigation }) => {
             ) : (
               <>
                 <Text style={styles.loginButtonText}>Log In </Text>
-                <Feather name="arrow-right" size={20} color="#460283" />
+                <Ionicons name="arrow-forward" size={20} color="#460283" />
               </>
             )}
           </TouchableOpacity>

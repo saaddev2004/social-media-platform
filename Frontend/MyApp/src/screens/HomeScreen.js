@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -75,7 +75,7 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Vynce</Text>
         <TouchableOpacity onPress={handleLogout}>
-          <Feather name="log-out" size={24} color="#fff" />
+          <Ionicons name="log-out-outline" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
       
@@ -94,7 +94,7 @@ const HomeScreen = ({ navigation }) => {
                   <TouchableOpacity style={styles.storyItem} onPress={handleCreateStory}>
                     <View style={[styles.storyRing, { borderColor: 'transparent' }]}>
                       <View style={styles.addStoryPlaceholder}>
-                        <Feather name="plus" size={24} color="#fff" />
+                        <Ionicons name="add" size={24} color="#fff" />
                       </View>
                     </View>
                     <Text style={styles.storyUsername}>Your Story</Text>
