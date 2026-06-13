@@ -57,18 +57,22 @@ We pride ourselves on a beautiful, dark-themed UI that is easy on the eyes and p
       <img src="GUI%20Images/Home%20Feed.png" width="250" />
     </td>
     <td align="center">
+      <b>Explore</b><br/>
+      <img src="GUI%20Images/Explore.png" width="250" />
+    </td>
+    <td align="center">
+      <b>Create Post</b><br/>
+      <img src="GUI%20Images/Create%20Post.png" width="250" />
+    </td>
+  </tr>
+  <tr>
+  <td align="center">
       <b>Create Story</b><br/>
       <img src="GUI%20Images/Create%20Story.png" width="250" />
     </td>
     <td align="center">
       <b>Story Viewer</b><br/>
       <img src="GUI%20Images/Story%20Viewer.png" width="250" />
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <b>Create Post</b><br/>
-      <img src="GUI%20Images/Create%20Post.png" width="250" />
     </td>
     <td align="center">
       <b>Comments</b><br/>
