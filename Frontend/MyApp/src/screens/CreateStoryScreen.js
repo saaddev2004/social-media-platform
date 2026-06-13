@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
-import { Feather, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -61,14 +61,14 @@ const CreateStoryScreen = ({ route, navigation }) => {
       <View style={styles.backgroundTouch}>
         <View style={styles.topContainer}>
           <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
-            <Feather name="x" size={20} color="#fff" />
+            <Ionicons name="close" size={20} color="#fff" />
           </TouchableOpacity>
           <View style={styles.topRightIcons}>
             <TouchableOpacity style={styles.topIconButton}>
-              <Feather name="zap-off" size={20} color="#fff" />
+              <Ionicons name="flash-off" size={20} color="#fff" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.topIconButton} onPress={pickImage}>
-              <Feather name="refresh-ccw" size={20} color="#fff" />
+              <Ionicons name="sync" size={20} color="#fff" />
             </TouchableOpacity>
           </View>
         </View>
@@ -78,7 +78,7 @@ const CreateStoryScreen = ({ route, navigation }) => {
             <Text style={styles.sidebarTextIcon}>T</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.sidebarButton}>
-            <Feather name="smile" size={20} color="#fff" />
+            <Ionicons name="happy-outline" size={20} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.sidebarButton}>
             <Ionicons name="musical-note" size={20} color="#fff" />
@@ -87,7 +87,7 @@ const CreateStoryScreen = ({ route, navigation }) => {
             <Ionicons name="sparkles-outline" size={20} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.sidebarButton}>
-            <Feather name="chevron-down" size={20} color="#fff" />
+            <Ionicons name="chevron-down" size={20} color="#fff" />
           </TouchableOpacity>
         </View>
 
@@ -104,7 +104,7 @@ const CreateStoryScreen = ({ route, navigation }) => {
 
           <View style={styles.bottomBar}>
             <TouchableOpacity style={styles.saveButton}>
-              <Feather name="download" size={18} color="#fff" />
+              <Ionicons name="download-outline" size={18} color="#fff" />
               <Text style={styles.saveText}>Save</Text>
             </TouchableOpacity>
 

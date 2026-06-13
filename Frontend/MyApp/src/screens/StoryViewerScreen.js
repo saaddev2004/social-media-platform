@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, SafeAreaView, Image, TouchableWithoutFeedback, Dimensions } from 'react-native';
-import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -124,10 +124,10 @@ const StoryViewerScreen = ({ route, navigation }) => {
 
                 <View style={styles.headerRight} onStartShouldSetResponder={() => true}>
                   <TouchableOpacity style={styles.iconButton}>
-                    <Feather name="more-horizontal" size={24} color="#fff" />
+                    <Ionicons name="ellipsis-horizontal" size={24} color="#fff" />
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.iconButton} onPress={() => navigation.goBack()}>
-                    <Feather name="x" size={24} color="#fff" />
+                    <Ionicons name="close" size={24} color="#fff" />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -159,10 +159,10 @@ const StoryViewerScreen = ({ route, navigation }) => {
                     />
                   </View>
                   <TouchableOpacity style={styles.footerIconButton}>
-                    <Feather name="heart" size={24} color="#fff" />
+                    <Ionicons name="heart-outline" size={24} color="#fff" />
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.footerIconButton}>
-                    <Feather name="send" size={24} color="#fff" />
+                    <Ionicons name="paper-plane-outline" size={24} color="#fff" />
                   </TouchableOpacity>
                 </View>
                 

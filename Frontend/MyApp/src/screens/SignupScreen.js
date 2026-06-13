@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert, ActivityIndicator } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 
 const SignupScreen = ({ navigation }) => {
@@ -49,7 +49,7 @@ const SignupScreen = ({ navigation }) => {
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>Full Name</Text>
             <View style={styles.inputContainer}>
-              <Feather name="user" size={20} color="#8E8E93" style={styles.icon} />
+              <Ionicons name="person-outline" size={20} color="#8E8E93" style={styles.icon} />
               <TextInput 
                 style={styles.input} 
                 placeholder="Jordan Doe" 
@@ -63,7 +63,7 @@ const SignupScreen = ({ navigation }) => {
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>Username</Text>
             <View style={styles.inputContainer}>
-              <Feather name="at-sign" size={20} color="#8E8E93" style={styles.icon} />
+              <Ionicons name="at-outline" size={20} color="#8E8E93" style={styles.icon} />
               <TextInput 
                 style={styles.input} 
                 placeholder="jordan_v" 
@@ -78,7 +78,7 @@ const SignupScreen = ({ navigation }) => {
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>Email</Text>
             <View style={styles.inputContainer}>
-              <Feather name="mail" size={20} color="#8E8E93" style={styles.icon} />
+              <Ionicons name="mail-outline" size={20} color="#8E8E93" style={styles.icon} />
               <TextInput 
                 style={styles.input} 
                 placeholder="jordan@example.com" 
@@ -94,7 +94,7 @@ const SignupScreen = ({ navigation }) => {
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>Password</Text>
             <View style={styles.inputContainer}>
-              <Feather name="lock" size={20} color="#8E8E93" style={styles.icon} />
+              <Ionicons name="lock-closed-outline" size={20} color="#8E8E93" style={styles.icon} />
               <TextInput 
                 style={styles.input} 
                 placeholder="••••••••" 
@@ -104,7 +104,7 @@ const SignupScreen = ({ navigation }) => {
                 onChangeText={setPassword}
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#8E8E93" style={styles.iconRight} />
+                <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={20} color="#8E8E93" style={styles.iconRight} />
               </TouchableOpacity>
             </View>
           </View>
@@ -115,7 +115,7 @@ const SignupScreen = ({ navigation }) => {
             ) : (
               <>
                 <Text style={styles.signupButtonText}>Sign Up </Text>
-                <Feather name="arrow-right" size={20} color="#460283" />
+                <Ionicons name="arrow-forward" size={20} color="#460283" />
               </>
             )}
           </TouchableOpacity>
