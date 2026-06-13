@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="GUI Images/Splash Screen.png" alt="Vynce Logo" width="150" />
   <h1>Vynce - Social Media App</h1>
   <p>A modern, high-performance social media application built with React Native and Node.js. Share your moments, connect with friends, and explore the world.</p>
 </div>
