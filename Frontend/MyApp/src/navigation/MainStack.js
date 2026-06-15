@@ -7,6 +7,7 @@ import BottomTabs from '../navigation/BottomTabs';
 import CreateStoryScreen from '../screens/CreateStoryScreen';
 import StoryViewerScreen from '../screens/StoryViewerScreen';
 import CreatePostScreen from '../screens/CreatePostScreen';
+import CommentsScreen from '../screens/CommentsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,12 +18,20 @@ export default function MainStack() {
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
       
-      {/* Yahan 'Main' route se BottomTabs load hoga */}
       <Stack.Screen name="Main" component={BottomTabs} />
       
       <Stack.Screen name="CreateStory" component={CreateStoryScreen} />
       <Stack.Screen name="StoryViewer" component={StoryViewerScreen} />
       <Stack.Screen name="CreatePost" component={CreatePostScreen} />
+      
+      <Stack.Screen 
+        name="Comments" 
+        component={CommentsScreen} 
+        options={{ 
+          presentation: 'transparentModal', // Peeche ki screen dikhti rahegi
+          animation: 'slide_from_bottom'    // Niche se slide ho kar aayega
+        }} 
+      />
     </Stack.Navigator>
   );
 }
