@@ -1,15 +1,12 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 const SplashScreen = ({ navigation }) => {
   useEffect(() => {
     setTimeout(() => {
-      navigation.replace('Login');
+      navigation.replace("Login");
     }, 2000);
   }, []);
-
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.logoText}>Vynce</Text>
@@ -19,29 +16,27 @@ const SplashScreen = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#121212",
+    justifyContent: "center",
+    alignItems: "center",
   },
   logoText: {
     fontSize: 52,
-    fontWeight: 'bold',
-    fontStyle: 'italic',
-    color: '#F3E8FF',
+    fontWeight: "bold",
+    fontStyle: "italic",
+    color: "#F3E8FF",
     letterSpacing: 1.5,
-    textShadowColor: '#C084FC',
+    textShadowColor: "#C084FC",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 15,
     marginBottom: 40,
   },
   loaderContainer: {
-    position: 'absolute',
-    bottom: '40%',
-  }
+    position: "absolute",
+    bottom: "40%",
+  },
 });
-
 export default SplashScreen;

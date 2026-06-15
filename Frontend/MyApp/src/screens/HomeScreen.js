@@ -1,11 +1,20 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image, ActivityIndicator, RefreshControl } from 'react-native';
-import PostItem from '../components/PostItem/PostItem';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import * as ImagePicker from 'expo-image-picker';
-import { Ionicons } from '@expo/vector-icons';
-import axios from 'axios';
-import { useFocusEffect } from '@react-navigation/native';
+import React, { useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  FlatList,
+  Image,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import PostItem from "../components/PostItem/PostItem";
+import { SafeAreaView } from "react-native-safe-area-context";
+import * as ImagePicker from "expo-image-picker";
+import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
 
 const HomeScreen = ({ route, navigation }) => {
   const token = route.params?.token;
@@ -20,8 +29,12 @@ const HomeScreen = ({ route, navigation }) => {
     try {
       if (!token) return;
       const [storiesRes, postsRes] = await Promise.all([
-        axios.get('https://social-media-platform-bice.vercel.app/api/stories/feed', { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get('https://social-media-platform-bice.vercel.app/api/posts/all', { headers: { Authorization: `Bearer ${token}` } })
+        axios.get("https://social-media-platform-bice.vercel.app/api/stories/feed", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get("https://social-media-platform-bice.vercel.app/api/posts/all", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
       ]);
 
       const grouped = storiesRes.data.reduce((acc, story) => {
@@ -34,7 +47,7 @@ const HomeScreen = ({ route, navigation }) => {
       setStories(Object.values(grouped));
       setPosts(postsRes.data);
     } catch (error) {
-      console.log('Error:', error);
+      console.log("Error:", error);
     }
   };
 
@@ -51,29 +64,72 @@ const HomeScreen = ({ route, navigation }) => {
     setRefreshing(false);
   };
 
+  const handleCreateStory = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+    if (!result.canceled) {
+      navigation.navigate("CreateStory", {
+        imageUri: result.assets[0].uri,
+        token,
+      });
+    }
+  };
+
+  const handleLogout = () => navigation.replace("Login");
+
   const renderStoriesHeader = () => (
     <View style={styles.storiesContainer}>
-      {loading && stories.length === 0 ? <ActivityIndicator color="#A855F7" /> : (
+      {loading && stories.length === 0 ? (
+        <ActivityIndicator color="#A855F7" />
+      ) : (
         <FlatList
           data={[{ isAddButton: true }, ...stories]}
           horizontal
           showsHorizontalScrollIndicator={false}
-          keyExtractor={(item, index) => item.isAddButton ? 'add-btn' : item.author._id}
+          keyExtractor={(item, index) =>
+            item.isAddButton ? "add-btn" : item.author._id
+          }
+          contentContainerStyle={styles.storiesList}
           renderItem={({ item, index }) => (
-            <TouchableOpacity style={styles.storyItem} onPress={item.isAddButton ? 
-              async () => {
-                let result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 1 });
-                if (!result.canceled) navigation.navigate('CreateStory', { imageUri: result.assets[0].uri, token });
-              } : () => navigation.navigate('StoryViewer', { allGroups: stories, initialGroupIndex: index - 1 })
-            }>
-              <View style={[styles.storyRing, item.isAddButton && styles.transparentBorder]}>
+            <TouchableOpacity
+              style={styles.storyItem}
+              onPress={
+                item.isAddButton
+                  ? handleCreateStory
+                  : () =>
+                      navigation.navigate("StoryViewer", {
+                        allGroups: stories,
+                        initialGroupIndex: index - 1,
+                      })
+              }
+            >
+              <View
+                style={[
+                  styles.storyRing,
+                  item.isAddButton && styles.transparentBorder,
+                ]}
+              >
                 {item.isAddButton ? (
-                  <View style={styles.addStoryPlaceholder}><Ionicons name="add" size={24} color="#fff" /></View>
+                  <View style={styles.addStoryPlaceholder}>
+                    <Ionicons name="add" size={24} color="#fff" />
+                  </View>
                 ) : (
-                  <Image source={{ uri: item.author.profilePic !== 'default.png' ? item.author.profilePic : 'https://ui-avatars.com/api/?name=' + item.author.username }} style={styles.storyImage} />
+                  <Image
+                    source={{
+                      uri:
+                        item.author.profilePic !== "default.png"
+                          ? item.author.profilePic
+                          : "https://ui-avatars.com/api/?name=" + item.author.username,
+                    }}
+                    style={styles.storyImage}
+                  />
                 )}
               </View>
-              <Text style={styles.storyUsername}>{item.isAddButton ? 'Your Story' : item.author.username}</Text>
+              <Text style={styles.storyUsername} numberOfLines={1}>
+                {item.isAddButton ? "Your Story" : item.author.username}
+              </Text>
             </TouchableOpacity>
           )}
         />
@@ -85,7 +141,7 @@ const HomeScreen = ({ route, navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Vynce</Text>
-        <TouchableOpacity onPress={() => navigation.replace('Login')}>
+        <TouchableOpacity onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -93,28 +149,86 @@ const HomeScreen = ({ route, navigation }) => {
       <FlatList
         data={posts}
         keyExtractor={(item) => item._id}
-        ListHeaderComponent={renderStoriesHeader} // Stories yahan attach ho gayi
+        ListHeaderComponent={renderStoriesHeader}
         renderItem={({ item }) => (
           <PostItem item={item} token={token} currentUserId={currentUserId} />
         )}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#fff" />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#fff"
+          />
+        }
         contentContainerStyle={{ paddingBottom: 20 }}
+        ListEmptyComponent={
+          !loading && (
+            <View style={{ marginTop: 50 }}>
+              <Text style={{ color: "#666", textAlign: "center" }}>
+                No posts available!
+              </Text>
+            </View>
+          )
+        }
       />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' },
-  headerContainer: { paddingHorizontal: 15, paddingVertical: 10, borderBottomWidth: 0.5, borderBottomColor: '#262626', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  header: { color: '#fff', fontSize: 24, fontWeight: 'bold', fontStyle: 'italic' },
-  storiesContainer: { paddingVertical: 10, borderBottomWidth: 0.5, borderBottomColor: '#262626' },
-  storyItem: { alignItems: 'center', marginHorizontal: 8, width: 72 },
-  storyRing: { width: 68, height: 68, borderRadius: 34, borderWidth: 2, borderColor: '#C084FC', justifyContent: 'center', alignItems: 'center', marginBottom: 5 },
-  transparentBorder: { borderColor: 'transparent' },
-  storyImage: { width: 60, height: 60, borderRadius: 30, borderWidth: 2, borderColor: '#000' },
-  addStoryPlaceholder: { width: 60, height: 60, borderRadius: 30, backgroundColor: '#262626', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#000' },
-  storyUsername: { color: '#fff', fontSize: 12, textAlign: 'center' }
+  container: { flex: 1, backgroundColor: "#000" },
+  headerContainer: {
+    paddingTop: 10,
+    paddingHorizontal: 15,
+    paddingBottom: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#262626",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  header: {
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "bold",
+    fontStyle: "italic",
+  },
+  storiesContainer: {
+    paddingVertical: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#262626",
+  },
+  storiesList: { paddingHorizontal: 10 },
+  storyItem: { alignItems: "center", marginHorizontal: 8, width: 72 },
+  storyRing: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    borderWidth: 2,
+    borderColor: "#C084FC",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  transparentBorder: { borderColor: "transparent" },
+  storyImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: "#000",
+  },
+  addStoryPlaceholder: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#262626",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#000",
+  },
+  storyUsername: { color: "#fff", fontSize: 12, textAlign: "center" },
 });
 
 export default HomeScreen;
