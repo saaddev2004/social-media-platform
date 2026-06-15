@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,155 +9,147 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import PostItem from "../components/PostItem/PostItem";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
+
 const HomeScreen = ({ route, navigation }) => {
   const token = route.params?.token;
   const currentUserId = route.params?.userId;
+
   const [stories, setStories] = useState([]);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const fetchPosts = async () => {
+
+  const fetchData = async () => {
     try {
       if (!token) return;
-      const res = await axios.get(
-        "https://social-media-platform-bice.vercel.app/api/posts/all",
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      setPosts(res.data);
-    } catch (error) {
-      console.log(
-        "Error fetching posts:",
-        error.response?.data || error.message,
-      );
-    }
-  };
-  const fetchStories = async () => {
-    try {
-      if (!token) return;
-      const res = await axios.get(
-        "https://social-media-platform-bice.vercel.app/api/stories/feed",
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      const grouped = res.data.reduce((acc, story) => {
+      const [storiesRes, postsRes] = await Promise.all([
+        axios.get("https://social-media-platform-bice.vercel.app/api/stories/feed", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get("https://social-media-platform-bice.vercel.app/api/posts/all", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+
+      const grouped = storiesRes.data.reduce((acc, story) => {
         const authorId = story.author._id;
-        if (!acc[authorId]) {
-          acc[authorId] = { author: story.author, stories: [] };
-        }
+        if (!acc[authorId]) acc[authorId] = { author: story.author, stories: [] };
         acc[authorId].stories.push(story);
         return acc;
       }, {});
+
       setStories(Object.values(grouped));
+      setPosts(postsRes.data);
     } catch (error) {
-      console.log(
-        "Error fetching stories:",
-        error.response?.data || error.message,
-      );
+      console.log("Error:", error);
     }
   };
-  useEffect(() => {
-    setLoading(true);
-    Promise.all([fetchStories(), fetchPosts()]).finally(() =>
-      setLoading(false),
-    );
-  }, [token]);
-  const onRefresh = () => {
+
+  useFocusEffect(
+    useCallback(() => {
+      setLoading(true);
+      fetchData().finally(() => setLoading(false));
+    }, [token])
+  );
+
+  const onRefresh = async () => {
     setRefreshing(true);
-    fetchPosts().then(() => setRefreshing(false));
+    await fetchData();
+    setRefreshing(false);
   };
+
   const handleCreateStory = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
     });
-    if (!result.canceled)
+    if (!result.canceled) {
       navigation.navigate("CreateStory", {
         imageUri: result.assets[0].uri,
         token,
       });
+    }
   };
+
   const handleLogout = () => navigation.replace("Login");
+
+  const renderStoriesHeader = () => (
+    <View style={styles.storiesContainer}>
+      {loading && stories.length === 0 ? (
+        <ActivityIndicator color="#A855F7" />
+      ) : (
+        <FlatList
+          data={[{ isAddButton: true }, ...stories]}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item, index) =>
+            item.isAddButton ? "add-btn" : item.author._id
+          }
+          contentContainerStyle={styles.storiesList}
+          renderItem={({ item, index }) => (
+            <TouchableOpacity
+              style={styles.storyItem}
+              onPress={
+                item.isAddButton
+                  ? handleCreateStory
+                  : () =>
+                      navigation.navigate("StoryViewer", {
+                        allGroups: stories,
+                        initialGroupIndex: index - 1,
+                      })
+              }
+            >
+              <View
+                style={[
+                  styles.storyRing,
+                  item.isAddButton && styles.transparentBorder,
+                ]}
+              >
+                {item.isAddButton ? (
+                  <View style={styles.addStoryPlaceholder}>
+                    <Ionicons name="add" size={24} color="#fff" />
+                  </View>
+                ) : (
+                  <Image
+                    source={{
+                      uri:
+                        item.author.profilePic !== "default.png"
+                          ? item.author.profilePic
+                          : "https://ui-avatars.com/api/?name=" + item.author.username,
+                    }}
+                    style={styles.storyImage}
+                  />
+                )}
+              </View>
+              <Text style={styles.storyUsername} numberOfLines={1}>
+                {item.isAddButton ? "Your Story" : item.author.username}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+      )}
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
-      {" "}
       <View style={styles.headerContainer}>
-        {" "}
-        <Text style={styles.header}>Vynce</Text>{" "}
+        <Text style={styles.header}>Vynce</Text>
         <TouchableOpacity onPress={handleLogout}>
-          {" "}
-          <Ionicons name="log-out-outline" size={24} color="#fff" />{" "}
-        </TouchableOpacity>{" "}
-      </View>{" "}
-      <View style={styles.storiesContainer}>
-        {" "}
-        {loading && stories.length === 0 ? (
-          <ActivityIndicator color="#A855F7" />
-        ) : (
-          <FlatList
-            data={[{ isAddButton: true }, ...stories]}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item, index) =>
-              item.isAddButton ? "add-btn" : item.author._id
-            }
-            renderItem={({ item, index }) => {
-              if (item.isAddButton)
-                return (
-                  <TouchableOpacity
-                    style={styles.storyItem}
-                    onPress={handleCreateStory}
-                  >
-                    {" "}
-                    <View style={[styles.storyRing, styles.transparentBorder]}>
-                      {" "}
-                      <View style={styles.addStoryPlaceholder}>
-                        <Ionicons name="add" size={24} color="#fff" />
-                      </View>{" "}
-                    </View>{" "}
-                    <Text style={styles.storyUsername}>Your Story</Text>{" "}
-                  </TouchableOpacity>
-                );
-              return (
-                <TouchableOpacity
-                  style={styles.storyItem}
-                  onPress={() =>
-                    navigation.navigate("StoryViewer", {
-                      allGroups: stories,
-                      initialGroupIndex: index - 1,
-                    })
-                  }
-                >
-                  {" "}
-                  <View style={styles.storyRing}>
-                    {" "}
-                    <Image
-                      source={{
-                        uri:
-                          item.author.profilePic !== "default.png"
-                            ? item.author.profilePic
-                            : "https://ui-avatars.com/api/?name=" +
-                              item.author.username,
-                      }}
-                      style={styles.storyImage}
-                    />{" "}
-                  </View>{" "}
-                  <Text style={styles.storyUsername} numberOfLines={1}>
-                    {item.author.username}
-                  </Text>{" "}
-                </TouchableOpacity>
-              );
-            }}
-            contentContainerStyle={styles.storiesList}
-          />
-        )}{" "}
-      </View>{" "}
+          <Ionicons name="log-out-outline" size={24} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
       <FlatList
         data={posts}
         keyExtractor={(item) => item._id}
+        ListHeaderComponent={renderStoriesHeader}
         renderItem={({ item }) => (
           <PostItem item={item} token={token} currentUserId={currentUserId} />
         )}
@@ -172,21 +164,21 @@ const HomeScreen = ({ route, navigation }) => {
         ListEmptyComponent={
           !loading && (
             <View style={{ marginTop: 50 }}>
-              {" "}
               <Text style={{ color: "#666", textAlign: "center" }}>
                 No posts available!
-              </Text>{" "}
+              </Text>
             </View>
           )
         }
-      />{" "}
+      />
     </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
   headerContainer: {
-    paddingTop: 50,
+    paddingTop: 10,
     paddingHorizontal: 15,
     paddingBottom: 10,
     borderBottomWidth: 0.5,
@@ -238,4 +230,5 @@ const styles = StyleSheet.create({
   },
   storyUsername: { color: "#fff", fontSize: 12, textAlign: "center" },
 });
+
 export default HomeScreen;
